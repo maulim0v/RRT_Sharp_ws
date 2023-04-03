@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<launch>
+    <node pkg="rrt_sharp" type="rrt_sharp_node" name="rrt_sharp_node" output="screen">
+    </node>
+</launch>
