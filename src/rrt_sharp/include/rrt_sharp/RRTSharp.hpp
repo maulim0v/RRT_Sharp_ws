@@ -25,14 +25,24 @@
 class RRTSharp final
 {
 public:
-    RRTSharp();
 
+    RRTSharp(const std::vector<double>& objectMap = {});
+
+    void setMapInfo(const double minX, const double minY, const double resolution, const int numX, const int numY);
+    void setObjectMap(const std::vector<double>& objectMap);
+    void setObservedMap(const std::vector<int>& observedMap);
+    void setTerrainMap(const std::vector<double>& terrainMap);
+    void setStartState(const double x, const double y, const double thetaDeg);
+    void setGoalState(const double x, const double y, const double thetaDeg);
+    void setStopRadius(const double radius);
+    void init();
+    void run();
 
 private:
 
     void initSearchSpace() noexcept;
-    void initObjects() noexcept;
-    void initVariables() noexcept;
+    void initObjects(const bool run = false) noexcept;
+    void initVariables(const bool run = false) noexcept;
     void initGraph() noexcept;
     void addObject(const double minX, const double maxX, const double minY, const double maxY) noexcept;
     void showSearchSpace() noexcept;
@@ -45,6 +55,7 @@ private:
     void plotGoalState() noexcept;
     void debugDubinsPath() noexcept;
     void addNode(const std::shared_ptr<Node>& node) noexcept;
+    double calculateCost(const std::vector<std::pair<int, int>>& pathIndeces, const double pathLength);
     void plotTree() const noexcept;
     void plotEdge(const Point& start, const Point& end) const noexcept;
 
@@ -69,6 +80,10 @@ private:
     int m_numX; ///<
     int m_numY; ///<
     int m_numGrids; ///<
+
+    std::vector<double> m_objectMap;
+    std::vector<int> m_observedMap;
+    std::vector<double> m_terrainMap;
 
     int m_numOccupiedGrids; ///<
 

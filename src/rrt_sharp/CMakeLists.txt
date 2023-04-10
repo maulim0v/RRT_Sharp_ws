@@ -7,12 +7,13 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(catkin REQUIRED COMPONENTS
     roscpp
 )
-#find_package(SFML COMPONENTS window graphics system)
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 find_package(Python3 COMPONENTS NumPy)
 find_package(ompl REQUIRED)
 find_package(eigen3)
+find_package(Boost COMPONENTS python REQUIRED)
+find_package(PythonLibs 3.8 REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -33,7 +34,6 @@ set(RRT_SHARP_SOURCES
     src/GraphNode.cpp
     src/Edge.cpp
 
-    src/RRTSharpNode.cpp
     src/RRTSharp.cpp
     src/Cost.cpp
     src/Key.cpp
@@ -78,8 +78,7 @@ set(RRT_SHARP_HEADERS
     include/rrt_sharp/Ray.hpp
     include/rrt_sharp/NodeCompare.hpp
 )
-
-add_executable(rrt_sharp ${RRT_SHARP_SOURCES} ${RRT_SHARP_HEADERS})
+add_library(rrt_sharp ${RRT_SHARP_SOURCES} ${RRT_SHARP_HEADERS})
 target_include_directories(rrt_sharp PUBLIC ${catkin_INCLUDE_DIRS}
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/rrt_sharp>
   $<INSTALL_INTERFACE:include}>
@@ -88,4 +87,41 @@ target_link_libraries(rrt_sharp
   Python3::Python
   Python3::Module
   ompl
+)
+
+add_executable(rrt_sharp_exe src/RRTSharpNode.cpp)
+target_link_libraries(rrt_sharp_exe
+  rrt_sharp
+)
+
+set(PY_SOURCES
+    src/py/converter/IterableConverter.cpp
+    src/py/main.cpp
+    src/py/RRTSharpPyInterface.cpp
+)
+
+set(PY_HEADERS
+    include/rrt_sharp/py/converter/IterableConverter.hpp
+    include/rrt_sharp/py/RRTSharpPyInterface.hpp
+)
+
+set(CMAKE_SHARED_MODULE_PREFIX "")
+
+add_library(
+  rrt_sharp_py MODULE
+    ${PY_SOURCES}
+    ${PY_HEADERS}
+)
+
+target_link_libraries(
+  rrt_sharp_py
+    ${Boost_LIBRARIES}
+    ${PYTHON_LIBRARIES}
+    rrt_sharp
+)
+
+target_include_directories(
+  rrt_sharp_py PRIVATE
+    ${PYTHON_INCLUDE_DIRS}
+    include
 )

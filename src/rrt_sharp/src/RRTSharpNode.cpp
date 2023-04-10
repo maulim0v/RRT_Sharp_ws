@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 
 //    ros::NodeHandle nh{"~"};
 
-    RRTSharp rrtSharp;
+    RRTSharp rrtSharp();
 
 //    ros::spin();
 
