@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 # Map types to encodings (NO_DATA->0, VALID->1...)
 Encoding = Enum('Encoding', ['NO_DATA', 'VALID', 'NOISE', 'NOISE_INFERRED', 'INFERRED'])
 
-PATH_TO_SHARED_LIB = str(Path(__file__).resolve().parent.parent.parent.parent.parent) + '/devel/lib/'
+PATH_TO_SHARED_LIB = str(Path(__file__).resolve().parent.parent.parent) + '/build/'
 sys.path.append(PATH_TO_SHARED_LIB)
 
-print(sys.path)
+print(PATH_TO_SHARED_LIB)
 
 from rrt_sharp_py import *
 

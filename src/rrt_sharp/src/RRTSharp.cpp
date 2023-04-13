@@ -5,12 +5,13 @@
 #include "Ray.hpp"
 
 // Library
-#include <matplotlibcpp.h>
+//#include <matplotlibcpp.h>
 
 // Standard
 #include <algorithm>
 #include <cmath>
 #include <chrono>
+#include <map>
 #include <random>
 #include <unordered_set>
 
@@ -253,11 +254,11 @@ RRTSharp::RRTSharp(const std::vector<double>& objectMap) :
             }
         }
 
-        matplotlibcpp::xlim(m_minX, m_maxX);
-        matplotlibcpp::ylim(m_minY, m_maxY);
+//        matplotlibcpp::xlim(m_minX, m_maxX);
+//        matplotlibcpp::ylim(m_minY, m_maxY);
     }
 
-    matplotlibcpp::show();
+//    matplotlibcpp::show();
 }
 
 void RRTSharp::setMapInfo(const double minX, const double minY, const double resolution, const int numX, const int numY)
@@ -337,7 +338,7 @@ void RRTSharp::init()
 void RRTSharp::run()
 {
     auto t100 = std::chrono::system_clock::now();
-    constexpr int maxIterations = 50000;
+    constexpr int maxIterations = 100000;
     for (int iteration = 0; iteration < maxIterations; ++iteration)
     {
 //        std::cout << "iter: " << iteration << std::endl;
@@ -547,9 +548,9 @@ void RRTSharp::run()
         }
     }
 
-    matplotlibcpp::xlim(m_minX, m_maxX);
-    matplotlibcpp::ylim(m_minY, m_maxY);
-    matplotlibcpp::show();
+//    matplotlibcpp::xlim(m_minX, m_maxX);
+//    matplotlibcpp::ylim(m_minY, m_maxY);
+//    matplotlibcpp::show();
 }
 
 double RRTSharp::calculateCost(const std::vector<std::pair<int, int>>& pathIndeces, const double pathLength)
@@ -605,7 +606,7 @@ void RRTSharp::plotTree() const noexcept
             exists[children.first].insert(child);
             exists[child].insert(children.first);
 
-            matplotlibcpp::plot(pathX, pathY);
+//            matplotlibcpp::plot(pathX, pathY);
         }
     }
 
@@ -621,7 +622,7 @@ void RRTSharp::plotEdge(const Point& start, const Point& end) const noexcept
     std::vector<double> pathX{start.x(), end.x()};
     std::vector<double> pathY{start.y(), end.y()};
 
-    matplotlibcpp::plot(pathX, pathY);
+//    matplotlibcpp::plot(pathX, pathY);
 }
 
 void RRTSharp::addNode(const std::shared_ptr<Node>& node) noexcept
@@ -835,9 +836,9 @@ void RRTSharp::debugDubinsPath() noexcept
         vecY.push_back(point.point().y());
     }
 
-    matplotlibcpp::scatter(vecX, vecY);
-    matplotlibcpp::axis("equal");
-    matplotlibcpp::show();
+//    matplotlibcpp::scatter(vecX, vecY);
+//    matplotlibcpp::axis("equal");
+//    matplotlibcpp::show();
 }
 
 void RRTSharp::initSearchSpace() noexcept
@@ -905,12 +906,28 @@ void RRTSharp::initObjects(const bool run) noexcept
                         ++m_numOccupiedGrids;
                     }
                 }
-                else if (m_objectMap.at(index) > 2.0)
+                else if (m_objectMap.at(index) > 1.5)
                 {
-                    if (m_searchMap.at(index) == false)
+                    static constexpr int numInf = 1;
+                    for (int infX = indX - numInf; infX <= indX + numInf; ++infX)
                     {
-                        m_searchMap[index] = true;
-                        ++m_numOccupiedGrids;
+                        for (int infY = indY - numInf; infY <= indY + numInf; ++infY)
+                        {
+                            if ((infX < 0) ||
+                                (infX >= m_numX) ||
+                                (infY < 0) ||
+                                (infY >= m_numY))
+                            {
+                                continue;
+                            }
+
+                            const int infIndex = infX * m_numY + infY;
+                            if (m_searchMap.at(infIndex) == false)
+                            {
+                                m_searchMap[infIndex] = true;
+                                ++m_numOccupiedGrids;
+                            }
+                        }
                     }
                 }
                 else
@@ -996,8 +1013,8 @@ void RRTSharp::showSearchSpace() noexcept
     std::map<std::string, std::string> keywords;
     keywords.emplace("origin", "lower");
 
-    matplotlibcpp::imshow(searchMap.data(), m_numX, m_numY, 1, keywords);
-    matplotlibcpp::show();
+//    matplotlibcpp::imshow(searchMap.data(), m_numX, m_numY, 1, keywords);
+//    matplotlibcpp::show();
 }
 
 void RRTSharp::plotSearchSpace() noexcept
@@ -1032,7 +1049,7 @@ void RRTSharp::plotSearchSpace() noexcept
             continue;
         }
 
-        matplotlibcpp::scatter(objectX, objectY, 10.0, keywords);
+//        matplotlibcpp::scatter(objectX, objectY, 10.0, keywords);
     }
 }
 
@@ -1042,7 +1059,7 @@ void RRTSharp::plotStartState() noexcept
     keywords.emplace("color", "green");
     keywords.emplace("marker", "o");
 
-    matplotlibcpp::plot({m_startState.point().x()}, {m_startState.point().y()}, keywords);
+//    matplotlibcpp::plot({m_startState.point().x()}, {m_startState.point().y()}, keywords);
 }
 
 void RRTSharp::plotState(const State& state) noexcept
@@ -1051,7 +1068,7 @@ void RRTSharp::plotState(const State& state) noexcept
     keywords.emplace("color", "blue");
     keywords.emplace("marker", "s");
 
-    matplotlibcpp::plot({state.point().x()}, {state.point().y()}, keywords);
+//    matplotlibcpp::plot({state.point().x()}, {state.point().y()}, keywords);
 
 }
 
@@ -1070,7 +1087,7 @@ void RRTSharp::plotPathFromIndeces(const std::vector<std::pair<int, int>>& pathI
         pathY.push_back(xy.second * m_resolution + m_minY);
     }
 
-    matplotlibcpp::plot(pathX, pathY, keywords);
+//    matplotlibcpp::plot(pathX, pathY, keywords);
 }
 
 void RRTSharp::plotPath(const std::vector<State>& path) noexcept
@@ -1088,7 +1105,7 @@ void RRTSharp::plotPath(const std::vector<State>& path) noexcept
         pathY.push_back(state.point().y());
     }
 
-    matplotlibcpp::plot(pathX, pathY, keywords);
+//    matplotlibcpp::plot(pathX, pathY, keywords);
 }
 
 void RRTSharp::plotGoalState() noexcept
@@ -1097,7 +1114,7 @@ void RRTSharp::plotGoalState() noexcept
     keywords.emplace("color", "red");
     keywords.emplace("marker", "x");
 
-    matplotlibcpp::plot({m_goalState.point().x()}, {m_goalState.point().y()}, keywords);
+//    matplotlibcpp::plot({m_goalState.point().x()}, {m_goalState.point().y()}, keywords);
 }
 
 Key RRTSharp::key(const Node& node) const noexcept

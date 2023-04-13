@@ -3,21 +3,22 @@ project(rrt_sharp)
 
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_STANDARD 17)
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall  -O3 -fPIC" )
 
-find_package(catkin REQUIRED COMPONENTS
-    roscpp
-)
+#find_package(catkin REQUIRED COMPONENTS
+#    roscpp
+#)
 
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-find_package(Python3 COMPONENTS NumPy)
+#find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+#find_package(Python3 COMPONENTS NumPy)
 find_package(ompl REQUIRED)
-find_package(eigen3)
+find_package(Eigen3)
 find_package(Boost COMPONENTS python REQUIRED)
 find_package(PythonLibs 3.8 REQUIRED)
 
-catkin_package(
-  INCLUDE_DIRS include
-)
+#catkin_package(
+#  INCLUDE_DIRS include
+#)
 
 #include_directories(
 #    include
@@ -50,7 +51,7 @@ set(RRT_SHARP_SOURCES
 
 set(RRT_SHARP_HEADERS
 
-    include/rrt_sharp/matplotlibcpp.h
+#    include/rrt_sharp/matplotlibcpp.h
 
 
     include/rrt_sharp/Point.hpp
@@ -79,20 +80,21 @@ set(RRT_SHARP_HEADERS
     include/rrt_sharp/NodeCompare.hpp
 )
 add_library(rrt_sharp ${RRT_SHARP_SOURCES} ${RRT_SHARP_HEADERS})
-target_include_directories(rrt_sharp PUBLIC ${catkin_INCLUDE_DIRS}
+target_include_directories(rrt_sharp PUBLIC #[[${catkin_INCLUDE_DIRS}]]
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/rrt_sharp>
   $<INSTALL_INTERFACE:include}>
 )
 target_link_libraries(rrt_sharp
-  Python3::Python
-  Python3::Module
+#  Python3::Python
+#  Python3::Module
+#  Python3::NumPy
   ompl
 )
 
-add_executable(rrt_sharp_exe src/RRTSharpNode.cpp)
-target_link_libraries(rrt_sharp_exe
-  rrt_sharp
-)
+#add_executable(rrt_sharp_exe src/RRTSharpNode.cpp)
+#target_link_libraries(rrt_sharp_exe
+#  rrt_sharp
+#)
 
 set(PY_SOURCES
     src/py/converter/IterableConverter.cpp
