@@ -335,6 +335,58 @@ void RRTSharp::init()
     initGraph();
 }
 
+std::vector<double> RRTSharp::getTrajectoryX() const noexcept
+{
+    return m_optimalTrajectoryX;
+}
+
+std::vector<double> RRTSharp::getTrajectoryY() const noexcept
+{
+    return m_optimalTrajectoryY;
+}
+
+std::vector<double> RRTSharp::getSearchSpaceX() const noexcept
+{
+    std::vector<double> objectX;
+    for (int indX = 0; indX < m_numX; ++indX)
+    {
+        for (int indY = 0; indY < m_numY; ++indY)
+        {
+            const int index = indX * m_numY + indY;
+
+            // Object occupied
+            if (m_searchMap.at(index) == true)
+            {
+                const double poseX = indX * m_resolution + m_minX;
+                objectX.push_back(poseX);
+            }
+        }
+    }
+
+    return objectX;
+}
+
+std::vector<double> RRTSharp::getSearchSpaceY() const noexcept
+{
+    std::vector<double> objectY;
+    for (int indX = 0; indX < m_numX; ++indX)
+    {
+        for (int indY = 0; indY < m_numY; ++indY)
+        {
+            const int index = indX * m_numY + indY;
+
+            // Object occupied
+            if (m_searchMap.at(index) == true)
+            {
+                const double poseY = indY * m_resolution + m_minY;
+                objectY.push_back(poseY);
+            }
+        }
+    }
+
+    return objectY;
+}
+
 void RRTSharp::run()
 {
     auto t100 = std::chrono::system_clock::now();
@@ -448,11 +500,11 @@ void RRTSharp::run()
 
 //        std::cout << "a10" << std::endl;
 
-        if (sample->lmc().value() < m_bestCost.value())
-        {
-            m_bestCost = sample->lmc();
-            m_bestNode = *sample;
-        }
+        // if (sample->lmc().value() < m_bestCost.value())
+        // {
+        //     m_bestCost = sample->lmc();
+        //     m_bestNode = *sample;
+        // }
 
         // Replan
         while (true)
@@ -501,6 +553,13 @@ void RRTSharp::run()
         if (distanceToStart < 2.0)
         {
             std::cout << "Reached" << std::endl;
+
+            if (sample->lmc().value() < m_bestCost.value())
+            {
+                m_bestCost = sample->lmc();
+                m_bestNode = *sample;
+            }
+            
             //break;
         }
     }
@@ -546,6 +605,29 @@ void RRTSharp::run()
                 parentId = m_nodeById.at(parentId)->parentId();
             }
         }
+    }
+
+    Node curr = m_bestNode;
+    Node next = curr;
+
+    m_optimalTrajectoryX.push_back(curr.state().point().x());
+    m_optimalTrajectoryY.push_back(curr.state().point().y());
+
+    while (true)
+    {
+        if (curr.parentId() == -1)
+        {
+            break;
+        }
+
+        next = *m_nodeById.at(curr.parentId());
+
+        m_optimalTrajectoryX.push_back(next.state().point().x());
+        m_optimalTrajectoryY.push_back(next.state().point().y());
+
+        plotEdge(curr.state().point(), next.state().point());
+
+        curr = next;
     }
 
 //    matplotlibcpp::xlim(m_minX, m_maxX);

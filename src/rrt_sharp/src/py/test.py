@@ -82,3 +82,14 @@ rrt_sharp.set_stop_radius(5.0)
 rrt_sharp.init()
 rrt_sharp.run()
 
+traj_x = list(rrt_sharp.get_trajectory_x())
+traj_y = list(rrt_sharp.get_trajectory_y())
+
+search_space_x = list(rrt_sharp.get_search_space_x())
+search_space_y = list(rrt_sharp.get_search_space_y())
+
+plt.scatter(search_space_x, search_space_y)
+
+plt.plot(traj_x, traj_y)
+plt.show()
+

@@ -38,6 +38,11 @@ public:
     void init();
     void run();
 
+    std::vector<double> getTrajectoryX() const noexcept;
+    std::vector<double> getTrajectoryY() const noexcept;
+    std::vector<double> getSearchSpaceX() const noexcept;
+    std::vector<double> getSearchSpaceY() const noexcept;
+
 private:
 
     void initSearchSpace() noexcept;
@@ -99,6 +104,9 @@ private:
 
     std::unordered_map<int, std::shared_ptr<Node>> m_nodeById;
     std::vector<Edge> m_edges;
+
+    std::vector<double> m_optimalTrajectoryX;
+    std::vector<double> m_optimalTrajectoryY;
 
     std::unordered_map<int, std::vector<int>> m_childrenByParent;
 

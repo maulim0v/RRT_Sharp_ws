@@ -3,6 +3,7 @@
 
 // Library
 #include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <rrt_sharp/RRTSharp.hpp>
 
 // Standard
@@ -12,18 +13,25 @@ void RRTSharpPyInterface::wrap()
 {
     namespace bp = boost::python;
 
-     bp::class_<RRTSharp>("RRTSharp")
-             .def(boost::python::init<>())
-             .def(boost::python::init<const std::vector<double>&>())
-             .def("set_map_info", &RRTSharp::setMapInfo)
-             .def("set_object_map", &RRTSharp::setObjectMap)
-             .def("set_observed_map", &RRTSharp::setObservedMap)
-             .def("set_terrain_map", &RRTSharp::setTerrainMap)
-             .def("set_start_state", &RRTSharp::setStartState)
-             .def("set_goal_state", &RRTSharp::setGoalState)
-             .def("set_stop_radius", &RRTSharp::setStopRadius)
-             .def("init", &RRTSharp::init)
-             .def("run", &RRTSharp::run)
+    bp::class_<std::vector<double>>("Vector")
+            .def(bp::vector_indexing_suite<std::vector<double>>());
+
+    bp::class_<RRTSharp>("RRTSharp")
+            .def(boost::python::init<>())
+            .def(boost::python::init<const std::vector<double>&>())
+            .def("set_map_info", &RRTSharp::setMapInfo)
+            .def("set_object_map", &RRTSharp::setObjectMap)
+            .def("set_observed_map", &RRTSharp::setObservedMap)
+            .def("set_terrain_map", &RRTSharp::setTerrainMap)
+            .def("set_start_state", &RRTSharp::setStartState)
+            .def("set_goal_state", &RRTSharp::setGoalState)
+            .def("set_stop_radius", &RRTSharp::setStopRadius)
+            .def("init", &RRTSharp::init)
+            .def("run", &RRTSharp::run)
+            .def("get_trajectory_x", &RRTSharp::getTrajectoryX)
+            .def("get_trajectory_y", &RRTSharp::getTrajectoryY)
+            .def("get_search_space_x", &RRTSharp::getSearchSpaceX)
+            .def("get_search_space_y", &RRTSharp::getSearchSpaceY)
 
 //             .add_property("resolution_mm", &RRTSharp::getResolutionMM, &RRTSharp::setResolutionMM)
 //             .add_property("x_min_mm", &RRTSharp::getXMinMM, &RRTSharp::setXMinMM)
